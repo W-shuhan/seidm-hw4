@@ -7,6 +7,7 @@
 
 import MySQLdb
 import MySQLdb.cursors
+import string
 
 class CwbPipeline(object):
     def __init__(self):
@@ -18,7 +19,11 @@ class CwbPipeline(object):
         self.cursor = self.conn.cursor()
 
     def process_item(self, item, spider):
-        self.cursor.execute("""INSERT INTO a136 (sid, name, t_10m, t_1h, t_3h, t_6h, t_12h, t_24h, t_today, t_yday, t_2d) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",(
+        
+       # if item['t_10m'] == "-":
+       #         item['t_10m'] = -1
+        
+        self.cursor.execute("INSERT INTO a136 (sid, name, t_10m, t_1h, t_3h, t_6h, t_12h, t_24h, t_today, t_yday, t_2d, Realtime) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",(
             item['sid'],
             item['name'],
             item['t_10m'],
@@ -29,7 +34,8 @@ class CwbPipeline(object):
             item['t_24h'],
             item['t_today'],
             item['t_yday'],
-            item['t_2d']
+            item['t_2d'],
+            item['realtime'].replace("資料時間 : ", "")
         ))  
         self.conn.commit()
         #self.conn.close()
